@@ -16,7 +16,7 @@ const orderSchema = new dynamoose.Schema({
     }
   },
   createdAt: {
-    type: Date,
+    type: [Date, String],
     default: () => new Date()
   },
   isActive: {
