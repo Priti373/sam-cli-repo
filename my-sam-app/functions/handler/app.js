@@ -9,7 +9,7 @@ exports.lambdaHandler = async (event, context) => {
     const result = await orderList();
     const endTime = Date.now();
     console.log(`Execution time: ${endTime - startTime} ms`);
-    return data;
+    return result;
   } catch (error) {
     const response = {
       statusCode: 500,
