@@ -88,6 +88,51 @@ const orderService = {
         error: error.message
       };
     }
+  },
+  async createList(orderData) {
+    try {
+      // Validate required fields
+      if (!orderData.id || !orderData.amount) {
+        return {
+          statusCode: 400,
+          message: "Missing required fields: id and amount are required"
+        };
+      }
+
+      // Check if order with same ID already exists
+      const existingOrder = await OrderModel.get({ id: orderData.id });
+      if (existingOrder) {
+        return {
+          statusCode: 409,
+          message: "Order with this ID already exists"
+        };
+      }
+
+      // Create new order
+      const newOrder = new OrderModel({
+        id: orderData.id,
+        amount: Number(orderData.amount),
+        recType: orderData.recType || "ORDER",
+        isActive: orderData.isActive !== undefined ? orderData.isActive : true,
+        createdAt: new Date()
+      });
+
+      // Save the order to DynamoDB
+      const savedOrder = await newOrder.save();
+
+      return {
+        statusCode: 201,
+        data: savedOrder,
+        message: "Order created successfully"
+      };
+    } catch (error) {
+      console.error('Error creating order:', error);
+      return {
+        statusCode: 500,
+        message: "Error creating order",
+        error: error.message
+      };
+    }
   }
 };
 
